@@ -71,3 +71,5 @@ The project's local .gitignore file was created and committed to prevent the exp
 * electrum-personal-server/config.ini (Contains RPC credentials and the wallet's XPUB).
 
 * .bitcoin/ directory (Contains the entire blockchain database).
+  <img width="653" height="489" alt="Screenshot 2025-11-10 164232" src="https://github.com/user-attachments/assets/01c4e396-a227-4654-afd2-e3669762c8dc" />
+
