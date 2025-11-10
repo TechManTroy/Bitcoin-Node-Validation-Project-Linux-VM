@@ -1,0 +1,24 @@
+# ⚠️ CRUCIAL SECURITY EXCLUSIONS (NEVER TRACK)
+# These files contain RPC credentials, XPUB keys, or local authentication details.
+# We track the service files but NOT the files with actual secrets.
+bitcoin.conf
+electrum-personal-server/config.ini
+
+# BITCOIN CORE DATA (Large Blockchain and Database Files)
+# This is the massive blockchain data (~700GB) that should never be tracked.
+# The default Bitcoin Core data directory.
+.bitcoin/
+
+# PYTHON VIRTUAL ENVIRONMENT
+# If you create a Python virtual environment for EPS (recommended)
+venv/
+.venv/
+
+# PYTHON BYTECODE AND BUILD
+__pycache__/
+*.pyc
+
+# LOGS AND TEMPORARY FILES (Specific to the Services)
+*.log
+*.tmp
+debug.log
