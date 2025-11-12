@@ -43,5 +43,25 @@ Three adapters were configured to create the secure, isolated lab network. Promi
 | Adapter 3 | **Host-Only Adapter** | OPT1 (Management Access) | Promiscuous Mode: **Allow All** |
 
 ## Next Step
-Phase 0, Step 3: Install the pfSense OS, assign interfaces, and change the default LAN IP.
+# Phase 0, Step 3: pfSense OS Installation and Initial IP Assignment
+
+## 3.1 Installation Procedure (Netgate Installer)
+The pfSense OS was installed via the Netgate Installer. ZFS was used as the file system, and a strong root password was set for console access.
+
+## 3.2 Interface Assignment Confirmation
+The three network interfaces were successfully mapped to their logical roles at the pfSense console prompt:
+
+| pfSense Role | Device Name Used (CRITICAL) | Rationale |
+| :--- | :--- | :--- |
+| **WAN** | **em0** | Internet Gateway (Bridged Adapter) |
+| **LAN** | **em1** | **SECURE_LAN** (Isolated Node Network) |
+| **OPT1** | **em2** | Management Access (Host-Only Adapter) Will Configure in next step |
+
+## 3.3 Default Network Status
+The LAN interface is currently operating on the default network:
+
+* **LAN IP Address (Default):** 192.168.1.1/24 (Will Configure in next step)
+
+## Next Step
+Phase 0, Step 4: Configuring the Custom LAN/OPT1 IP addresses to establish the secure lab network.
 
