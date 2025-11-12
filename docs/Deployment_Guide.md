@@ -46,7 +46,7 @@ Three adapters were configured to create the secure, isolated lab network. Promi
 # Phase 0, Step 3: pfSense OS Installation and Initial IP Assignment
 
 ## 3.1 Installation Procedure (Netgate Installer)
-The pfSense OS was installed via the Netgate Installer. ZFS was used as the file system, and a strong root password was set for console access.
+The pfSense OS was installed via the Netgate Installer. ZFS was used as the file system.
 
 ## 3.2 Interface Assignment Confirmation
 The three network interfaces were successfully mapped to their logical roles at the pfSense console prompt:
@@ -63,5 +63,14 @@ The LAN interface is currently operating on the default network:
 * **LAN IP Address (Default):** 192.168.1.1/24 (Will Configure in next step)
 
 ## Next Step
-Phase 0, Step 4: Configuring the Custom LAN/OPT1 IP addresses to establish the secure lab network.
+# Phase 0, Step 4: Custom IP Configuration and Management Access Setup (Completed)
+
+## 4.1 Custom IP Hardening Confirmed
+The necessary static IPs and services are now active on the pfSense firewall:
+
+* **LAN IP Address:** 10.10.10.1/24 (DHCP enabled)
+* **OPT1 IP Address:** 192.168.56.2/24 (Static Management IP)
+
+## Next Step
+Phase 0, Step 5: Configure the Windows Host network adapter and access the pfSense Web GUI.
 
