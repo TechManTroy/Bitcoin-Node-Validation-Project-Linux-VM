@@ -20,18 +20,28 @@ The HTTPS protocol was bypassed in favor of SSH to secure the connection between
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-<img width="569" height="459" alt="Screenshot 2025-11-10 155714" src="https://github.com/user-attachments/assets/943a0695-8d3e-43ef-9576-634d87609356" />
+<img width="569" height="439" alt="Screenshot 2025-11-11 222157" src="https://github.com/user-attachments/assets/06c75c0c-431b-4bf2-8bf2-eab773c7f0eb" />
 
+
+- Image of created key
+
+#
 
 ### Action: Command used to copy createed key
 ```
 cat ~/.ssh/id_ed25519.pub
 ```
-<img width="511" height="72" alt="Screenshot 2025-11-10 160204" src="https://github.com/user-attachments/assets/2b20443e-445e-478b-aeb3-48d99b9c8d00" />
 
+<img width="509" height="72" alt="Screenshot 2025-11-11 222454" src="https://github.com/user-attachments/assets/ca32fe5e-dee3-435f-81b8-f8c4e05d0b0d" />
+
+- Image of command used to verify key was created so it could be copied
+
+#
 
 ### Action: Adding Key to GitHub profile
 <img width="958" height="276" alt="Screenshot 2025-11-10 160801" src="https://github.com/user-attachments/assets/cd459158-4bd6-4b33-8509-5f8f94718e91" />
+
+- Image of key being added to Github profile
 
 
 ### Next action was allowing repository to accept SSH communicaton - Clone repo
@@ -39,7 +49,12 @@ cat ~/.ssh/id_ed25519.pub
 ```
 $ git clone git@github.com:TechManTroy/Bitcoin-Node-Validation-Project-Linux-VM.git
 ```
-<img width="559" height="249" alt="Screenshot 2025-11-10 160629" src="https://github.com/user-attachments/assets/f5b19555-6a07-4599-b294-f8e9e6bb22cd" />
+<img width="559" height="246" alt="Screenshot 2025-11-11 222725" src="https://github.com/user-attachments/assets/faa165bc-ed24-4505-a128-c0281bbd3192" />
+
+- Image of repository being cloned
+
+#
+
 
 
 ## 2. Global Repository Exclusion Rules (.gitignore_global)
@@ -49,17 +64,28 @@ A global exclusion file was implemented on the Windows 11 host to maintain a cle
 ### Action: Configuration Command: The following command set the global rule:
 
 ```
-git config --global core.excludesfile C:/Users/troya/Git/.gitignore_global
+git config --global core.excludesfile C:/Users/yourusername/Git/.gitignore_global
 ```
 
-<img width="574" height="87" alt="Screenshot 2025-11-10 153131" src="https://github.com/user-attachments/assets/6234550c-ecb8-4483-9389-ce8179a20584" />
+<img width="561" height="62" alt="Screenshot 2025-11-11 223219" src="https://github.com/user-attachments/assets/4db82a2a-5b39-46c4-93bf-bcc0a9b675ce" />
+
+- Image of command used to set gitignore.global
+
+#
+
 
 
 ### Action: Command used to display global gitignore was created
 ```
 git config --global core.excludesfile
 ```
-<img width="565" height="362" alt="Screenshot 2025-11-10 153604" src="https://github.com/user-attachments/assets/cb843910-bed9-4f94-ab13-14abcaf7028a" />
+
+<img width="556" height="68" alt="Screenshot 2025-11-11 223449" src="https://github.com/user-attachments/assets/3ccfb0f5-7253-466d-9074-9f0c9ebdb5ea" />
+
+- Image of command used to display gitignore was created
+
+#
+
 
 ## 3. Project-Specific Exclusion Rules (.gitignore)
 The project's local .gitignore file was created and committed to prevent the exposure of runtime configuration secrets, which is a common security failure point.
@@ -73,3 +99,5 @@ The project's local .gitignore file was created and committed to prevent the exp
 * .bitcoin/ directory (Contains the entire blockchain database).
   <img width="653" height="489" alt="Screenshot 2025-11-10 164232" src="https://github.com/user-attachments/assets/01c4e396-a227-4654-afd2-e3669762c8dc" />
 
+- Image of Key Security Exclusions Tracked
+#
