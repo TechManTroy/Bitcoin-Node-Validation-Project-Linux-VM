@@ -39,3 +39,19 @@ Investigation revealed the Host-Only adapter was categorized by Windows Defender
 
 ### Result (R)
 The dedicated management link (OPT1) was bypassed. Management access will now be handled via a **secure two-jump SSH route** through the working WAN interface. The project was successfully unblocked by isolating the fault and adopting a more robust, professional solution.
+
+## Issue T-03: Missing Admin Password
+
+| Category | Security Hardening |
+| :--- | :--- |
+| **Phase/Step** | Phase 0, Step 4 (Initial Console Setup) |
+| **Date** | 2025-11-17 |
+
+### Problem (P)
+The pfSense administrative user (`admin`) was left with the default password (`pfsense`) or no password set after the installation and interface assignment, constituting a critical security vulnerability.
+
+### Action (A)
+Used console option **3 (Reset admin account and password)** to set a strong, unique password for the `admin` user, securing console and web GUI access before proceeding with network exposure.
+
+### Result (R)
+The primary firewall administrative credentials were successfully secured, fulfilling the security hardening requirement for the infrastructure phase.
