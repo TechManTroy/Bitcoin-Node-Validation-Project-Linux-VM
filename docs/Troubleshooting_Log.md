@@ -55,3 +55,23 @@ Used console option **3 (Reset admin account and password)** to set a strong, un
 
 ### Result (R)
 The primary firewall administrative credentials were successfully secured, fulfilling the security hardening requirement for the infrastructure phase.
+
+
+
+## Issue T-04 : Network Connection
+
+### Troubleshooting Log for Phase 0 step 5: Network & Access Failures
+
+This log details the persistent network conflicts and system service failures encountered during infrastructure setup (Phase 0) and the initial software installation (Phase 1). The log is vital for demonstrating problem-solving ability using the **Problem-Action-Result (PAR)** framework.
+
+| Date | Issue/Error | Root Cause (P) | Action/Workaround (A) | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| Nov 11 | **Host-Only Adapter Failure / Site Unreachable** | The VirtualBox Host-Only Adapter was confirmed to be non-functional, blocking the dedicated management link to the firewall. | **Strategy Pivot:** Abandoned Host-Only adapter. Moved to a **Two-Jump SSH management route** (Host $\rightarrow$ pfSense WAN $\rightarrow$ Node LAN). | Resolved |
+| Nov 17 | **LAN Conflict / No DHCP Lease** | The Node VM was failing to communicate its DHCP request to pfSense, leaving the system without a working network and DNS. | **Static Configuration:** Manually fixed the Node's Netplan file (`50-cloud-init.yaml`) with a **Permanent Static IP** (`10.10.10.100`), specifying the static gateway and DNS server. | Resolved |
+| Nov 17 | **`ssh: Connection closed` on WAN** | pfSense's default security policy was blocking the incoming SSH connection on the WAN interface, even though the service was enabled. | **Firewall Policy Fix:** Temporarily disabled the pfSense firewall (`pfctl -d`), established the SSH connection, and then added a **permanent rule** via console to allow SSH access from the Host's WAN-side IP. | Resolved |
+| Nov 17 | **Missing Network Services** | The minimal Ubuntu Server installation lacked critical components (`systemd-networkd`, `systemctl`) required to execute the static Netplan configuration. | **Software Install:** Used low-level `ip` commands to temporarily restore DNS, then installed the missing `systemd-networkd` package via `apt`. | Resolved |
+| Nov 17 | **Routing Failure / Hostname Error** | The Linux kernel was losing the essential **default gateway route** needed to reach the internet after network restarts. | **Final CLI Fix:** Used **`sudo ip route add default via 10.10.10.1`** combined with permanent static entries in Netplan to enforce the route and stabilize the network. | Resolved |
+| **FINAL OUTCOME** | **Instability Resolved** | Multiple low-level conflicts led to network instability. | **Final Action:** Achieved stable, persistent connectivity, allowing **successful SSH login** to the Node VM and progression to software installation. | **SUCCESS** |
+
+
+
