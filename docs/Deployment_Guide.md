@@ -72,5 +72,30 @@ The necessary static IPs and services are now active on the pfSense firewall:
 * **OPT1 IP Address:** 192.168.56.2/24 (Static Management IP)
 
 ## Next Step
-Phase 0, Step 5: Configure the Windows Host network adapter and access the pfSense Web GUI.
+# Phase 0, Step 5: Provisioning Bitcoin Node VM (Ubuntu Server)
+
+## 5.1 Virtual Machine Provisioning
+The Node VM was provisioned with high-performance resources, leveraging the Host's NVMe drive for optimal IBD speed.
+
+| Setting | Value | Rationale |
+| :--- | :--- | :--- |
+| VM Name | Bitcoin-Node-VM | |
+| RAM | 8 GB | Optimizes Initial Block Download (IBD) speed. |
+| Processors | 4 CPUs | Allocates cores for verification/hashing. |
+| Storage | 850 GB VDI (on NVMe SSD) | Guarantees sufficient space and high I/O performance. |
+
+## 5.2 Network Connection (Final Secure Architecture)
+The Node VM was successfully placed behind the pfSense firewall.
+
+* **Adapter 1:** Attached to **Internal Network**
+* **Network Name:** **SECURE_LAN**
+* **Goal:** The Node VM will automatically receive its IP address from pfSense's DHCP server (10.10.10.100-200 range).
+
+## 5.3 Management Workaround (Final)
+The broken Host-Only adapter link was abandoned. Management will proceed via a secure **Two-Jump SSH** route:
+1.  **Host PC** -> **pfSense WAN IP** (`192.168.1.x`)
+2.  **pfSense Console** -> **Node LAN IP** (`10.10.10.x`)
+
+## Next Step
+Phase 1: Installing and Configuring Bitcoin Core.
 
