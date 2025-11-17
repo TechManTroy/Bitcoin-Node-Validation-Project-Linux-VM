@@ -1,4 +1,4 @@
-# Proof of CPU/RAM/Storage settings (showing 2GB RAM, 1 CPU, and 16gb of storage).
+# Proof of pfSense VM set up CPU/RAM/Storage settings (showing 2GB RAM, 1 CPU, and 16gb of storage).
 
 <img width="866" height="548" alt="Screenshot 2025-11-11 190355" src="https://github.com/user-attachments/assets/a5ef0513-22d2-4c1b-ba2c-68db7f851b14" />
 
