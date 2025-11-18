@@ -13,10 +13,10 @@ The project demonstrates advanced skills in **network segmentation, system harde
 
 | Goal | Skill Demonstrated | Achievement |
 | :--- | :--- | :--- |
-| **Network Security** | **Advanced Firewalling & Isolation** | Successfully implemented a **Three-Interface (WAN/LAN/OPT1) pfSense firewall**, enforcing a **Default Deny** security posture on the Node VM's traffic. |
+| **Network Security** | **Advanced Firewalling & Isolation** | Successfully implemented a **Two-Interface (WAN/LAN) pfSense firewall**, enforcing a **Default Deny** security posture on the Node VM's traffic. |
 | **System Hardening** | **Linux System Administration (CLI)** | Deployed the Node VM using a minimal Ubuntu Server OS, reducing the attack surface. Managed the entire server via secure, persistent SSH. |
 | **Network Persistence** | **Netplan & Routing Mastery** | Resolved complex routing deadlocks by implementing a **permanent static IP configuration** and adding the crucial **Default Gateway route** directly to the Linux kernel. |
-| **Management Resiliency** | **Troubleshooting & Security Policy** | Successfully bypassed a broken Host-Only adapter to establish a functional, secure **Two-Jump SSH management link** (Host → pfSense → Node) by adding an explicit firewall rule. |
+| **Management Resiliency** | **Troubleshooting & Security Policy** | Bypassed initial network deadlocks to establish a functional, secure **Two-Jump SSH management link** (Host → pfSense → Node) by adding an explicit WAN firewall rule. |
 | **Core Function** | **Cryptocurrency Service Management** | Installed and configured the **Bitcoin Core** client on high-performance NVMe storage to begin the Initial Block Download (IBD) and validate the entire ledger. |
 
 ---
@@ -30,7 +30,7 @@ The project operates on a custom virtual internal network to ensure isolation:
 | :--- | :--- | :--- |
 | **Firewall (pfSense)** | Bridged / Internal Network | **`10.10.10.1`** (LAN Gateway) |
 | **Bitcoin Node VM** | Internal Network (`SECURE_LAN`) | **`10.10.10.100`** (Static IP) |
-| **Management Link** | Two-Jump SSH (Host $\rightarrow$ pfSense WAN $\rightarrow$ Node) | Bypasses broken Host-Only adapter for reliable access. |
+| **Management Link** | Secure Two-Jump SSH (Host $\rightarrow$ pfSense WAN $\rightarrow$ Node) | Full management is done via encrypted SSH from the host. |
 
 ### 2. Software & Services
 * **Host OS:** Windows 11
