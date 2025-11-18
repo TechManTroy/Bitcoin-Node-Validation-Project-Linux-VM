@@ -1,4 +1,3 @@
-# Bitcoin-Node-Validation-Project-Linux-VM
 
 # 🛡️ Secure Bitcoin Full Node Deployment & Validation Project
 
