@@ -4,7 +4,7 @@
 
 Since pivoting to a single-VM architecture, the network perimeter is managed at the residential gateway (**Spectrum Router**). To allow the Bitcoin Node to communicate with the global peer-to-peer network while maintaining a low profile, **Destination NAT (Port Forwarding)** was configured with a custom obfuscation layer.
 
-### 🔐 Custom Port Obfuscation
+### 🔐 Custom Port Configuration
 
 Instead of a standard 1:1 mapping, a custom external port was implemented. This is a strategic security move to reduce "noise" from automated bots that scan the internet specifically for the default Bitcoin port (8333).
 
