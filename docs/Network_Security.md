@@ -1,42 +1,55 @@
-# 🔒 Network Security Architecture and Policy
+# 🛡️ Network Security Documentation (Updated)
 
-## 1. Network Topology and Design Rationale (Phase 0)
+## 1. Perimeter Security & NAT Redirection
 
-This section justifies the custom three-adapter network design, demonstrating the crucial isolation of the Node VM.
+Since pivoting to a single-VM architecture, the network perimeter is managed at the residential gateway (**Spectrum Router**). To allow the Bitcoin Node to communicate with the global peer-to-peer network while maintaining a low profile, **Destination NAT (Port Forwarding)** was configured with a custom obfuscation layer.
 
-| Component | Network Interface (Adapter) | IP Range / CIDR | Security Rationale |
-| :--- | :--- | :--- | :--- |
-| **WAN (Internet)** | Adapter 1 (Bridged) | DHCP (from host router) | Allows the firewall to access the real internet (source of block data). |
-| **LAN (Secure Node)** | Adapter 2 (Internal Network: `SECURE_LAN`) | **10.10.10.1/24** | **CRITICAL ISOLATION.** Creates a private subnet, completely invisible to the main home network, forcing all Node traffic through pfSense. |
-| **MGMT (Management)** | Adapter 3 (Host-Only) | **192.168.56.2/24** | **Dedicated Control Plane.** Provides a secure, isolated channel for the host PC to manage the firewall. |
+### 🔐 Custom Port Obfuscation
 
----
+Instead of a standard 1:1 mapping, a custom external port was implemented. This is a strategic security move to reduce "noise" from automated bots that scan the internet specifically for the default Bitcoin port (8333).
 
-## 2. Firewall Rules Policy (Implemented in pfSense Web GUI)
-
-This documents the core security stance of the firewall (Default Deny) and the explicit rules needed for the system to function.
-
-### A. Default Blocking Behavior
-* **Policy:** The firewall operates under the principle of **Default Deny** on the WAN interface. This means all unsolicited traffic originating from the WAN (the internet) destined for the LAN (the Node network) is implicitly **BLOCKED** by default.
-* **Action:** **Promiscuous Mode** was enabled on all adapters to ensure the firewall correctly inspects all necessary traffic on the isolated segment.
-
-### B. Explicit Pass Rules (Required for Functionality)
-These rules are the bare minimum needed for the Node VM to function and get the blockchain.
-
-| Interface | Protocol / Action | Source | Destination | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **LAN** | **PASS** (Any) | **LAN Net** | **Any** | **Required Egress.** Allows the Bitcoin Node to initiate connections to the WAN (Internet) to download data. |
-| **WAN** | **PASS** (TCP/UDP) | **Any** | **WAN Address: Port 53** | Allows DNS resolution (if required for block synchronization). |
-
-### C. Custom Node Contribution Rule (Future State)
-* **Goal:** Once the Node is fully synced, a rule will be created on the WAN interface to allow inbound traffic on **Port 8333** (the Bitcoin P2P port), restricted only to the Node's internal IP (`10.10.10.x`), to contribute blocks to the network.
+| Setting | Value | Rationale |
+| --- | --- | --- |
+| **Service Name** | `Bitcoin-Node-Inbound` | Descriptive label in Spectrum Advanced Settings. |
+| **External Port** | **49383** | **Obfuscated Port:** Masked entry point to deter common scanners. |
+| **Internal Port** | **8333** | The standard port where the Bitcoin Core daemon listens. |
+| **Protocol** | TCP | Required for Bitcoin peer-to-peer data transmission. |
+| **Internal IP** | `192.168.1.x` | The static/reserved IP of the Ubuntu Node VM. |
 
 ---
 
-## 3. Security Hardening and Access Control
+## 2. Updated Infrastructure Traffic Flow
 
-This confirms the steps taken to secure the administrative side of the firewall and the node.
+The flow of inbound traffic now follows this secure path:
 
-* **pfSense Admin Access:** The default `admin`/`pfsense` credentials will be **immediately changed** during the setup wizard (Phase 0, Step 5).
-* **Root Console Access:** The strong `root` password was set during the installation phase.
-* **Node Access:** (Future State - Phase 3) **Root SSH login will be disabled** on the Node VM, and only secure, key-based authentication will be used.
+1. **External Traffic** hits your Spectrum Public IP on Port **49383**.
+2. **Spectrum Router** translates and forwards this to the **Ubuntu VM** on Port **8333**.
+3. **Ubuntu UFW (Firewall)** allows the connection only into the **Bitcoin Core** process.
+
+---
+
+## 3. Remote Management (2-Jump SSH)
+
+To ensure management traffic is never exposed to the public internet or the obfuscated Bitcoin port, the SSH path remains strictly internal.
+
+* **Management Port:** 22 (Internal only).
+* **Access Path:** Host PC ➔ SSH Tunnel ➔ Ubuntu Server.
+* **Hardening:** Modified `sshd_config` via `nano` to restrict inbound SSH to specific internal management IPs.
+
+---
+
+## 4. Verification Proof
+
+To confirm the Spectrum port forwarding is active, the following validation was performed:
+
+* **Inbound Check:** `bitcoin-cli getconnectioncount` confirms inbound peers are successfully connecting via the redirected path.
+* <img width="1140" height="94" alt="Screenshot 2026-01-01 092407" src="https://github.com/user-attachments/assets/ce6ceeb6-63a1-4fbb-9666-6efdff88d4d4" />
+
+* **Network Status:** `bitcoin-cli getnetworkinfo` shows the node is "Listening" on the network.
+<img width="1275" height="793" alt="Screenshot 2026-01-01 095021" src="https://github.com/user-attachments/assets/26b43a9a-f8e8-441e-a15c-e8730a949e69" />
+
+---
+
+
+
+
