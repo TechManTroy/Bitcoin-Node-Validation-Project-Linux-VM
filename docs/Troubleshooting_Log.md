@@ -1,77 +1,68 @@
-# Troubleshooting Log
+# 🛠️ Troubleshooting & Engineering Log
 
-## Issue T-01: Non-Standard Installation Media Compression
+## Overview
 
-| Category | Networking/Setup |
-| :--- | :--- |
-| **Phase/Step** | Phase 0, Step 1 (Media Acquisition) |
-| **Date** | 2025-11-11 |
+This document serves as a repository for technical roadblocks encountered during the Bitcoin Node Validation Project. Each entry follows the **PAR (Problem-Action-Result)** framework to document the diagnostic process and final resolution.
 
-### Problem (P)
-The official pfSense ISO image was downloaded as a multi-layered compressed archive (.gz), which was not recognized by the Windows host OS's native file extractor. Attempts to use the compressed file resulted in a failure to mount in VirtualBox.
+---
 
-### Action (A)
-1.  **Specialized Tool Acquisition:** Installed the open-source decompression utility **7-Zip** to handle the `.gz` file format, demonstrating reliance on specialized tools for system utility.
-2.  **Multi-Step Extraction:** Used 7-Zip's **Extract Files** function to perform the two-step decompression necessary to reveal the final usable **`.iso`** image (e.g., extracting from `.gz` to an intermediate file, then to the final `.iso`).
+## 🏗️ Phase 0: Infrastructure & Virtualization Issues
 
-### Result (R)
-The usable `.iso` installation file was successfully acquired. This established a robust workflow for handling non-standard archives, validating the integrity of the media before proceeding with the installation.
+### T-01: Compressed Installation Media Incompatibility
 
-## Issue T-02: Failure of OPT1 Management Link (Host-Only Network)
+* **Problem:** Official pfSense images were downloaded in `.gz` format, which Windows native tools failed to extract correctly, leading to mount errors in VirtualBox.
+* **Action:** Acquired **7-Zip** for specialized decompression. Executed a multi-step extraction to reveal the final `.iso`.
+* **Result:** Established a robust workflow for handling non-standard archives and validated media integrity.
 
-| Category | Networking/Virtualization |
-| :--- | :--- |
-| **Phase/Step** | Phase 0, Step 5 (Windows Host Configuration) |
-| **Date** | 2025-11-16 |
+### T-02: Management Link Failure (The Strategic Pivot)
 
-### Problem (P)
-The Windows Host PC was unable to establish a secure management connection to the pfSense OPT1 interface (192.168.56.2), resulting in a "Site can't be reached" error and failed ping tests. The failure persisted despite:
-1.  Verifying static IP configuration on the Host-Only adapter (Host: 192.168.56.10).
-2.  Disabling/enabling the adapter.
-3.  Resetting the entire Windows networking stack (`netsh winsock/int ip reset`).
+* **Problem:** The dedicated **OPT1 (Host-Only)** interface was blocked by Windows Defender (categorized as "Public"), preventing GUI and Ping access. Resetting the network stack failed to resolve the driver/firewall conflict.
+* **Action:** **Strategic Pivot.** Abandoned the unreliable Host-Only adapter. Implemented a **Two-Jump SSH route** (Host  pfSense WAN  Node LAN) to maintain management access.
+* **Result:** Bypassed faulty Windows drivers and adopted a more professional, command-line-centric management style.
 
-Investigation revealed the Host-Only adapter was categorized by Windows Defender Firewall as a "Public network," resulting in an overly strict inbound blocking policy that prevented HTTPS/ICMP traffic from the VM.
+### T-03: Default Credential Vulnerability
 
-### Action (A)
-1.  **Abandoned Broken Interface:** The OPT1 (Host-Only) interface was deemed permanently unreliable for management access due to persistent driver/firewall conflicts on the Host OS.
-2.  **Implemented Two-Step SSH Management:** A professional workaround was adopted, utilizing the **functional LAN interface** for management. This requires SSH access to the pfSense WAN IP, followed by an SSH jump to the Node's LAN IP.
-3.  **Prioritized Core Goal:** Proceeded with **Phase 0, Step 6 (Node VM Creation)**, confirming that the primary objective (Node isolation on `SECURE_LAN`) remained intact and functional.
+* **Problem:** The `admin` account was left with the default `pfsense` password after initial setup, creating a critical security risk.
+* **Action:** Utilized console option **3** to reset the account with a unique, high-entropy password.
+* **Result:** Secured the administrative perimeter before internet exposure.
 
-### Result (R)
-The dedicated management link (OPT1) was bypassed. Management access will now be handled via a **secure two-jump SSH route** through the working WAN interface. The project was successfully unblocked by isolating the fault and adopting a more robust, professional solution.
+---
 
-## Issue T-03: Missing Admin Password
+## 🌐 Phase 1: Networking & Connectivity Conflicts
 
-| Category | Security Hardening |
-| :--- | :--- |
-| **Phase/Step** | Phase 0, Step 4 (Initial Console Setup) |
-| **Date** | 2025-11-17 |
+### T-04: DHCP Lease & Netplan Conflicts
 
-### Problem (P)
-The pfSense administrative user (`admin`) was left with the default password (`pfsense`) or no password set after the installation and interface assignment, constituting a critical security vulnerability.
+* **Problem:** The Node VM failed to receive a DHCP lease from pfSense, resulting in "No Network" status.
+* **Action:** Manually edited the Ubuntu Netplan configuration (`50-cloud-init.yaml`) to assign a **Permanent Static IP** (`10.10.10.100`) and defined the gateway/DNS manually.
+* **Result:** Eliminated dependency on DHCP and stabilized internal node addressing.
 
-### Action (A)
-Used console option **3 (Reset admin account and password)** to set a strong, unique password for the `admin` user, securing console and web GUI access before proceeding with network exposure.
+### T-05: WAN-Side SSH Blocking
 
-### Result (R)
-The primary firewall administrative credentials were successfully secured, fulfilling the security hardening requirement for the infrastructure phase.
+* **Problem:** pfSense default security policy blocked incoming SSH on the WAN interface, even with the service active.
+* **Action:** Temporarily bypassed the packet filter (`pfctl -d`) to gain access, then applied a **Permanent Firewall Rule** via the console to allow SSH from the Host IP.
+* **Result:** Successfully established the first leg of the "Two-Jump" management route.
 
+### T-06: Missing Systemd Network Services
 
+* **Problem:** The minimal Ubuntu Server install lacked `systemd-networkd`, preventing the Netplan configuration from applying.
+* **Action:** Used low-level `ip` commands to force a temporary internet route, then used `apt` to install the missing network packages.
+* **Result:** Restored the system's ability to manage network configurations via standard Linux utilities.
 
-## Issue T-04 : Network Connection
+### T-07: Routing & Gateway Instability
 
-### Troubleshooting Log for Phase 0 step 5: Network & Access Failures
+* **Problem:** The Linux kernel was losing its **Default Gateway** route after reboots, breaking internet connectivity for the node.
+* **Action:** Executed **`sudo ip route add default via 10.10.10.1`** and hardcoded the route into the Netplan file to ensure persistence.
+* **Result:** Achieved 100% network stability, verified by successful outbound pings and blockchain synchronization.
 
-This log details the persistent network conflicts and system service failures encountered during infrastructure setup (Phase 0) and the initial software installation (Phase 1). The log is vital for demonstrating problem-solving ability using the **Problem-Action-Result (PAR)** framework.
+---
 
-| Date | Issue/Error | Root Cause (P) | Action/Workaround (A) | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| Nov 11 | **Host-Only Adapter Failure / Site Unreachable** | The VirtualBox Host-Only Adapter was confirmed to be non-functional, blocking the dedicated management link to the firewall. | **Strategy Pivot:** Abandoned Host-Only adapter. Moved to a **Two-Jump SSH management route** (Host $\rightarrow$ pfSense WAN $\rightarrow$ Node LAN). | Resolved |
-| Nov 17 | **LAN Conflict / No DHCP Lease** | The Node VM was failing to communicate its DHCP request to pfSense, leaving the system without a working network and DNS. | **Static Configuration:** Manually fixed the Node's Netplan file (`50-cloud-init.yaml`) with a **Permanent Static IP** (`10.10.10.100`), specifying the static gateway and DNS server. | Resolved |
-| Nov 17 | **`ssh: Connection closed` on WAN** | pfSense's default security policy was blocking the incoming SSH connection on the WAN interface, even though the service was enabled. | **Firewall Policy Fix:** Temporarily disabled the pfSense firewall (`pfctl -d`), established the SSH connection, and then added a **permanent rule** via console to allow SSH access from the Host's WAN-side IP. | Resolved |
-| Nov 17 | **Missing Network Services** | The minimal Ubuntu Server installation lacked critical components (`systemd-networkd`, `systemctl`) required to execute the static Netplan configuration. | **Software Install:** Used low-level `ip` commands to temporarily restore DNS, then installed the missing `systemd-networkd` package via `apt`. | Resolved |
-| Nov 17 | **Routing Failure / Hostname Error** | The Linux kernel was losing the essential **default gateway route** needed to reach the internet after network restarts. | **Final CLI Fix:** Used **`sudo ip route add default via 10.10.10.1`** combined with permanent static entries in Netplan to enforce the route and stabilize the network. | Resolved |
-| **FINAL OUTCOME** | **Instability Resolved** | Multiple low-level conflicts led to network instability. | **Final Action:** Achieved stable, persistent connectivity, allowing **successful SSH login** to the Node VM and progression to software installation. | **SUCCESS** |
+## 📈 Final Troubleshooting Outcome
+
+Despite multiple driver, routing, and firewall conflicts, the project was successfully unblocked through a combination of **infrastructure pivoting** and **low-level CLI diagnostics**. These resolutions ensured the Bitcoin Node is fully isolated, stable, and manageable.
+
+---
+
+### 📝 Documentation & Next Steps
 
 
 
