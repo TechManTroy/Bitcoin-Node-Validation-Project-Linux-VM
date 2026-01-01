@@ -1,56 +1,70 @@
-
 # 🛡️ Secure Bitcoin Full Node Deployment & Validation Project
 
 ## Overview
-This repository documents the deployment of a fully isolated and secure Bitcoin Full Node (Bitcoin Core) inside a custom **Virtual Local Area Network (VLAN) architecture** built entirely within VirtualBox.
 
-The project demonstrates advanced skills in **network segmentation, system hardening, and service persistence** by forcing the Node VM to operate behind a dedicated virtual firewall (pfSense), mitigating external and internal security threats.
+This repository documents the deployment of a fully isolated and hardened Bitcoin Full Node (Bitcoin Core) built entirely within a virtualized environment.
+
+Originally designed with a multi-tiered pfSense architecture, the project evolved through a **strategic pivot** into a high-performance, single-VM production model. This transition highlights a "Security-in-Depth" approach, moving the defensive perimeter from the network layer to the OS and ISP levels.
 
 ---
 
 ## 🎯 Key Project Goals & Technical Achievements
 
 | Goal | Skill Demonstrated | Achievement |
-| :--- | :--- | :--- |
-| **Network Security** | **Advanced Firewalling & Isolation** | Successfully implemented a **Two-Interface (WAN/LAN) pfSense firewall**, enforcing a **Default Deny** security posture on the Node VM's traffic. |
-| **System Hardening** | **Linux System Administration (CLI)** | Deployed the Node VM using a minimal Ubuntu Server OS, reducing the attack surface. Managed the entire server via secure, persistent SSH. |
-| **Network Persistence** | **Netplan & Routing Mastery** | Resolved complex routing deadlocks by implementing a **permanent static IP configuration** and adding the crucial **Default Gateway route** directly to the Linux kernel. |
-| **Management Resiliency** | **Troubleshooting & Security Policy** | Bypassed initial network deadlocks to establish a functional, secure **Two-Jump SSH management link** (Host → pfSense → Node) by adding an explicit WAN firewall rule. |
-| **Core Function** | **Cryptocurrency Service Management** | Installed and configured the **Bitcoin Core** client on high-performance NVMe storage to begin the Initial Block Download (IBD) and validate the entire ledger. |
+| --- | --- | --- |
+| **Infrastructure Pivot** | **Strategic Problem Solving** | Diagnosed hypervisor driver instability and **successfully pivoted architecture** to a stable, single-VM model without compromising node isolation. |
+| **Network Security** | **NAT & Port Obfuscation** | Implemented custom port forwarding (**Port 49383  8333**) on the Spectrum gateway to hide the service from automated global scanners. |
+| **System Hardening** | **Linux System Administration** | Deployed a minimal Ubuntu Server OS on NVMe storage. Secured the environment via **UFW (Uncomplicated Firewall)** and SSH configuration hardening. |
+| **Connectivity Mastery** | **Routing & Persistence** | Resolved routing deadlocks by manually configuring **Static IPs** and persistent **Default Gateway routes** within the Linux kernel via Netplan. |
+| **Management Resiliency** | **Secure Remote Access** | Established a secure **Two-Jump SSH management link**, ensuring all administrative traffic is encrypted and isolated from the public Bitcoin protocol traffic. |
 
 ---
 
 ## ⚙️ Final Architecture & Configuration Summary
 
 ### 1. Virtual Network Topology
-The project operates on a custom virtual internal network to ensure isolation:
 
-| Component | Network Method | IP Address / Role |
-| :--- | :--- | :--- |
-| **Firewall (pfSense)** | Bridged / Internal Network | **`10.10.10.1`** (LAN Gateway) |
-| **Bitcoin Node VM** | Internal Network (`SECURE_LAN`) | **`10.10.10.100`** (Static IP) |
-| **Management Link** | Secure Two-Jump SSH (Host $\rightarrow$ pfSense WAN $\rightarrow$ Node) | Full management is done via encrypted SSH from the host. |
+The project operates on a hardened virtual stack designed for maximum uptime and security:
+
+| Component | Network Method | Configuration / Role |
+| --- | --- | --- |
+| **Bitcoin Node VM** | Bridged Adapter | **`10.10.10.100`** (Static Internal IP) |
+| **Inbound Path** | Spectrum NAT Redirection | **External 49383  Internal 8333** (Obfuscated P2P) |
+| **Management Link** | Secure Two-Jump SSH | Encrypted CLI management from Host PC to Node. |
 
 ### 2. Software & Services
-* **Host OS:** Windows 11
-* **Hypervisor:** VirtualBox
-* **Firewall OS:** pfSense Community Edition
-* **Node OS:** Ubuntu Server LTS
+
+* **Hypervisor:** VirtualBox 7.2.4
+* **Node OS:** Ubuntu Server 24.04.3 LTS
 * **Core Service:** Bitcoin Core (`bitcoind`)
+* **Security Layer:** UFW (Linux Firewall) + Spectrum Perimeter NAT
+
+---
+
+## 🏗️ The Engineering Pivot (Lessons Learned)
+
+A hallmark of this project was the transition from a pfSense-layered network to the current model.
+
+* **Challenge:** Persistent VirtualBox Host-Only driver corruption prevented stable management access.
+* **Solution:** Simplified the network architecture to eliminate driver-level points of failure while shifting security policies to **UFW** and **Spectrum Port Forwarding**.
+* **Result:** Achieved 100% blockchain synchronization stability and reduced system overhead.
 
 ---
 
 ## 🚀 Next Steps (Security Hardening - Phase 3)
-The next phase of this project will focus entirely on locking down user access to the Node VM:
 
-1.  **SSH Key Authentication:** Implement key-based SSH and **disable password login**.
-2.  **User Access Control:** Disable direct root login and use `sudo` only.
+The next phase focuses on advanced user access controls:
 
-***
+1. **SSH Key Authentication:** Transitioning to RSA/Ed25519 keys and **disabling password-based login**.
+2. **Automated Defense:** Implementing `fail2ban` to automatically blacklist IPs attempting to brute-force the open management or P2P ports.
+
+---
 
 ### ➡️ Repository Contents
-* **`/docs`**: Contains the `Deployment_Guide.md` (the sequential build log), `Network_Security.md` (firewall policy and architecture justification), and `Troubleshooting_Log.md` (detailed failure and fix history).
-* **`/config`**: Templates for the `bitcoin.conf` and `systemd` service files.
-* **`/screenshots`**: Visual evidence of critical configurations and successful connection.
+
+* **`/docs`**:
+* `Deployment_Guide.md`: Sequential build log and installation steps.
+* `Network_Security.md`: Port obfuscation policy and firewall rules.
+* `Troubleshooting_Log.md`: Detailed "Problem-Action-Result" (PAR) history of the architecture pivot.
 
 
