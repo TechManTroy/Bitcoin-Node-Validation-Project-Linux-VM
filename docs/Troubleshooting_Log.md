@@ -60,9 +60,9 @@ This document serves as a repository for technical roadblocks encountered during
 
 Despite multiple driver, routing, and firewall conflicts, the project was successfully unblocked through a combination of **infrastructure pivoting** and **low-level CLI diagnostics**. These resolutions ensured the Bitcoin Node is fully isolated, stable, and manageable.
 
----
 
-### 📝 Documentation & Next Steps
+
+
 
 
 
