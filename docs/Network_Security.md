@@ -43,7 +43,7 @@ To ensure management traffic is never exposed to the public internet or the obfu
 To confirm the Spectrum port forwarding is active, the following validation was performed:
 
 * **Inbound Check:** `bitcoin-cli getconnectioncount` confirms inbound peers are successfully connecting via the redirected path.
-* <img width="1140" height="94" alt="Screenshot 2026-01-01 092407" src="https://github.com/user-attachments/assets/ce6ceeb6-63a1-4fbb-9666-6efdff88d4d4" />
+<img width="1140" height="94" alt="Screenshot 2026-01-01 092407" src="https://github.com/user-attachments/assets/ce6ceeb6-63a1-4fbb-9666-6efdff88d4d4" />
 
 * **Network Status:** `bitcoin-cli getnetworkinfo` shows the node is "Listening" on the network.
 <img width="1275" height="793" alt="Screenshot 2026-01-01 095021" src="https://github.com/user-attachments/assets/26b43a9a-f8e8-441e-a15c-e8730a949e69" />
